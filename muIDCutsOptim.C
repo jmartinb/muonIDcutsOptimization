@@ -420,7 +420,7 @@ Double_t muIDCutsOptim::GetNColl(Int_t centr)
 //_____________________________
 void muIDCutsOptim::SetCentralityMap(const char* file)
 {
-  // Creates a mapping between centrality and Ncoll, based on a text file (taken from: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHeavyIonCentrality)
+  // Creates a mapping between centrality and Ncoll, based on a text file (taken from: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHeavyIonCentrality )
   
   if ( strlen(file) > 0 )
   {
@@ -448,7 +448,7 @@ void muIDCutsOptim::SetCentralityMap(const char* file)
 //_____________________________
 Bool_t muIDCutsOptim::isSoftMuon(const double varVal [ ], Int_t cutType)
 {
-  // Soft MuID cuts (https://github.com/CMS-HIN-dilepton/cmssw/blob/Onia_HI_75X/HiAnalysis/HiOnia/plugins/HiOniaAnalyzer.cc#L1398):
+  // Soft MuID cuts ( https://github.com/CMS-HIN-dilepton/cmssw/blob/Onia_HI_75X/HiAnalysis/HiOnia/plugins/HiOniaAnalyzer.cc#L1398 ):
   //     - varVal[0] = isGoodMuon > 0
   //     - varVal[1] = highPurity > 0
   //     - varVal[9] = nPixWMea > 0
