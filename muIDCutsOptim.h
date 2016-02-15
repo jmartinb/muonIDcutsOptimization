@@ -586,9 +586,12 @@ Int_t muIDCutsOptim::Cut(TString var, int iqq, float cutval)
   
   return false;
 }
-bool muIDCutsOptim::IsAccept(double pt, double eta) {
-  return ( (fabs(eta)<1.0 && pt>=3.4) ||
-          (1.0<=fabs(eta) && fabs(eta)<1.5 && pt>=5.8-2.4*fabs(eta)) ||
-          (1.5<=fabs(eta) && fabs(eta)<2.4 && pt>=3.3667-7.0/9.0*fabs(eta)) );
+bool muIDCutsOptim::IsAccept(double pt, double eta)
+{
+  // Acceptance cuts 2015 V2
+  
+  return ( (fabs(eta)<1.2 && pt>=3.5) ||
+          (1.2<=fabs(eta) && fabs(eta)<2.1 && pt>=5.77-1.89*fabs(eta)) ||
+          (2.1<=fabs(eta) && fabs(eta)<2.4 && pt>=1.8) );
 }
 #endif // #ifdef muIDCutsOptim_cxx

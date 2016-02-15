@@ -42,7 +42,7 @@ void muIDCutsOptim::Loop()
   //===== Definition of file type, particle and if we want the high purity cut included in the soft muon ID cuts
   const char* fileType = "MC";
   const char* particle = "JPsi";
-  fIncludeHighPurity = kTRUE;
+  fIncludeHighPurity = kFALSE;
   //=====
   
   
@@ -62,9 +62,12 @@ void muIDCutsOptim::Loop()
   
   Double_t leMinvBkg2 = 3.3; // Bkg 1 range (sideband)
   Double_t ueMinvBkg2 = 3.5;
+
+  Double_t Ptmin = 3.0; // Pt cut (6.5)
+  Double_t Ptmax = 6.5; // (12.0)
   
-  Double_t Ptmin = 3.0; // Pt cut
-  Double_t Ptmax = 12.0;
+  Double_t Ymin = 2.0; // Y cut (0.0)
+  Double_t Ymax = 2.4; // (2.4)
   //=====
   
   
@@ -199,8 +202,9 @@ void muIDCutsOptim::Loop()
       tlvqq = (TLorentzVector*) Reco_QQ_4mom->At(i);
       Double_t mass = tlvqq->M();
       Double_t QQPt = tlvqq->Pt();
+      Double_t QQY = TMath::Abs(tlvqq->Rapidity());
       
-      if ( QQPt < Ptmin || QQPt > Ptmax ) continue; // The simulation is restricted to pt in [Ptmin,Ptmax], so this rejects background dmuons outside the range
+      if ( QQPt < Ptmin || QQPt > Ptmax || QQY < Ymin || QQY > Ymax ) continue; // The simulation is restricted to pt in [Ptmin,Ptmax], so this rejects background dmuons outside the range
       
       bool issig = (mass>leMinvSig && mass<ueMinvSig);
       bool isbkg = ((mass>leMinvBkg1 && mass<ueMinvBkg1) || (mass>leMinvBkg2 && mass<ueMinvBkg2));
@@ -299,7 +303,7 @@ void muIDCutsOptim::Loop()
   }
   
   //====== Save histos ======
-  TFile *f = new TFile(Form("histos_%s_%s_%s.root",fileType,particle,fIncludeHighPurity ? "HPincl" : "NoHPincl"),"RECREATE");
+  TFile *f = new TFile(Form("histos_%s_%s_%s_Pt%2.1f_%2.1f_Y%2.1f_%2.1f.root",fileType,particle,fIncludeHighPurity ? "HPincl" : "NoHPincl",Ptmin,Ptmax,Ymin,Ymax),"RECREATE");
   
   for (int i=0; i<nvar; i++)
   {
@@ -420,7 +424,7 @@ Double_t muIDCutsOptim::GetNColl(Int_t centr)
 //_____________________________
 void muIDCutsOptim::SetCentralityMap(const char* file)
 {
-  // Creates a mapping between centrality and Ncoll, based on a text file (taken from: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHeavyIonCentrality )
+  // Creates a mapping between centrality and Ncoll, based on a text file (taken from: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideHeavyIonCentrality)
   
   if ( strlen(file) > 0 )
   {
@@ -448,7 +452,7 @@ void muIDCutsOptim::SetCentralityMap(const char* file)
 //_____________________________
 Bool_t muIDCutsOptim::isSoftMuon(const double varVal [ ], Int_t cutType)
 {
-  // Soft MuID cuts ( https://github.com/CMS-HIN-dilepton/cmssw/blob/Onia_HI_75X/HiAnalysis/HiOnia/plugins/HiOniaAnalyzer.cc#L1398 ):
+  // Soft MuID cuts (https://github.com/CMS-HIN-dilepton/cmssw/blob/Onia_HI_75X/HiAnalysis/HiOnia/plugins/HiOniaAnalyzer.cc#L1398):
   //     - varVal[0] = isGoodMuon > 0
   //     - varVal[1] = highPurity > 0
   //     - varVal[9] = nPixWMea > 0

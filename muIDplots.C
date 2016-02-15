@@ -10,10 +10,12 @@
 #include "TLatex.h"
 #include "TLine.h"
 #include "TString.h"
+#include "TObjString.h"
 
 Double_t bkgNorm = 0.5;
 
-Bool_t isHPincluded(kTRUE);
+Bool_t isHPincluded(kFALSE);
+TString fKinRange("");
 
 //___________________________________________________________
 Double_t GetSoftMuCutValue(const char* varName)
@@ -113,12 +115,25 @@ void plotSingleCutEfficiency(TFile* fsig, TFile* fbkg, const char* varname [ ])
       text = new TLatex(0.1451149,0.5835095,Form("#varepsilon_{sig} [%%] =  %2.2f ; Rej_{bkg} [%%] =  %2.2f (%s %s %2.1f)",sigEff*100.,bkgEff*100.,varname[i],sign.Data(),cutVal));
       text->SetNDC();
       text->SetTextFont(42);
+      text->SetTextSize(0.0422833);
       text->SetLineWidth(2);
-      text->SetTextSize(0.03794038);
     }
+    
+    TLatex *textKin = new TLatex(0.1465517,0.653277,fKinRange.Data());
+    textKin->SetNDC();
+    textKin->SetTextFont(42);
+    textKin->SetTextSize(0.0422833);
+    textKin->SetLineWidth(2);
   
     
     hsigeff->GetYaxis()->SetRangeUser(0,1.05);
+    hsigeff->GetXaxis()->SetLabelSize(0.05);
+    hsigeff->GetXaxis()->SetTitleSize(0.05);
+    hsigeff->GetXaxis()->SetTitleOffset(0.93);
+    hsigeff->GetYaxis()->SetLabelSize(0.05);
+    hsigeff->GetYaxis()->SetTitleSize(0.05);
+    hsigeff->GetYaxis()->SetTitleOffset(0.9);
+    
     hsigeff->Draw("");
     hbkgeff->Draw("same");
     c1->Update();
@@ -149,6 +164,7 @@ void plotSingleCutEfficiency(TFile* fsig, TFile* fbkg, const char* varname [ ])
     leg->Draw();
     
     if ( text ) text->Draw("same");
+    textKin->Draw("same");
     
     c1->Update();
     c1->SaveAs(Form("SingleCutsEfficiency_%s.pdf",varname[i]));
@@ -236,12 +252,24 @@ void plotSingleCutEfficiencyWSoftMuCut(TFile* fsig, TFile* fbkg, const char* var
       text = new TLatex(0.1451149,0.5835095,Form("#varepsilon_{sig} [%%] =  %2.2f ; Rej_{bkg} [%%] =  %2.2f (%s %s %2.1f)",sigEff*100.,bkgEff*100.,varname[i],sign.Data(),cutVal));
       text->SetNDC();
       text->SetTextFont(42);
+      text->SetTextSize(0.0422833);
       text->SetLineWidth(2);
-      text->SetTextSize(0.03794038);
     }
     
+    TLatex *textKin = new TLatex(0.1465517,0.653277,fKinRange.Data());
+    textKin->SetNDC();
+    textKin->SetTextFont(42);
+    textKin->SetTextSize(0.0422833);
+    textKin->SetLineWidth(2);
     
     hsigeff->GetYaxis()->SetRangeUser(0,1.05);
+    hsigeff->GetXaxis()->SetLabelSize(0.05);
+    hsigeff->GetXaxis()->SetTitleSize(0.05);
+    hsigeff->GetXaxis()->SetTitleOffset(0.93);
+    hsigeff->GetYaxis()->SetLabelSize(0.05);
+    hsigeff->GetYaxis()->SetTitleSize(0.05);
+    hsigeff->GetYaxis()->SetTitleOffset(0.9);
+    
     hsigeff->Draw("");
     hbkgeff->Draw("same");
     c1->Update();
@@ -272,6 +300,7 @@ void plotSingleCutEfficiencyWSoftMuCut(TFile* fsig, TFile* fbkg, const char* var
     leg->Draw();
     
     if ( text ) text->Draw("same");
+    textKin->Draw("same");
     
     c1->Update();
     c1->SaveAs(Form("SingleCutsEfficiencyWSoftMuCut_%s.pdf",varname[i]));
@@ -398,7 +427,21 @@ void plotSigMuIDDistrWSoftMuCutButOne(TFile* fsig, TFile* fbkg, const char* varn
     text->SetTextFont(42);
     text->SetLineWidth(2);
     text->SetTextSize(0.03794038);
+    
+    TLatex* textKin = new TLatex(0.1465517,0.653277,fKinRange.Data());
+    textKin->SetNDC();
+    textKin->SetTextFont(42);
+    textKin->SetTextSize(0.0422833);
+    textKin->SetLineWidth(2);
     //=======
+    
+    hsigSubs->GetXaxis()->SetLabelSize(0.05);
+    hsigSubs->GetXaxis()->SetTitleSize(0.05);
+    hsigSubs->GetXaxis()->SetTitleOffset(0.93);
+    hsigSubs->GetYaxis()->SetLabelSize(0.05);
+    hsigSubs->GetYaxis()->SetTitleSize(0.05);
+    hsigSubs->GetYaxis()->SetTitleOffset(0.9);
+    
     
     // Draw line at the cut value
     TLine* l = new TLine(abs(cutVal),0.,abs(cutVal),1.);
@@ -411,6 +454,7 @@ void plotSigMuIDDistrWSoftMuCutButOne(TFile* fsig, TFile* fbkg, const char* varn
     c1->Update();
     
     text->Draw("same");
+    textKin->Draw("same");
     l->Draw("same");
     
     TLegend *leg = new TLegend(0.454023,0.3002114,0.8721264,0.4904863);
@@ -520,9 +564,25 @@ void plotSigMuIDDistrWSoftMuCut(TFile* fsig, TFile* fbkg, const char* varname [ 
     hSbkgSubs->GetYaxis()->SetRangeUser(0.,max);
     //=======
     
+    //=======
+    TLatex* textKin = new TLatex(0.1465517,0.653277,fKinRange.Data());
+    textKin->SetNDC();
+    textKin->SetTextFont(42);
+    textKin->SetTextSize(0.0422833);
+    textKin->SetLineWidth(2);
+    //=======
+    
+    hsigSubs->GetXaxis()->SetLabelSize(0.05);
+    hsigSubs->GetXaxis()->SetTitleSize(0.05);
+    hsigSubs->GetXaxis()->SetTitleOffset(0.93);
+    hsigSubs->GetYaxis()->SetLabelSize(0.05);
+    hsigSubs->GetYaxis()->SetTitleSize(0.05);
+    hsigSubs->GetYaxis()->SetTitleOffset(0.9);
+    
     
     hsigSubs->Draw("hist");
     hSbkgSubs->Draw("same");
+    textKin->Draw("same");
     c1->Update();
     
     
@@ -626,11 +686,26 @@ void plotSigBkgCompMuIDDistr(TFile* fsig, TFile* fbkg, const char* varname [ ])
     hsigSubs->GetYaxis()->SetRangeUser(0.,max);
     hbkg->GetYaxis()->SetRangeUser(0.,max);
     //=======
+  
+    //=======
+    TLatex* textKin = new TLatex(0.1465517,0.653277,fKinRange.Data());
+    textKin->SetNDC();
+    textKin->SetTextFont(42);
+    textKin->SetTextSize(0.0422833);
+    textKin->SetLineWidth(2);
+    //=======
     
+    hsigSubs->GetXaxis()->SetLabelSize(0.05);
+    hsigSubs->GetXaxis()->SetTitleSize(0.05);
+    hsigSubs->GetXaxis()->SetTitleOffset(0.93);
+    hsigSubs->GetYaxis()->SetLabelSize(0.05);
+    hsigSubs->GetYaxis()->SetTitleSize(0.05);
+    hsigSubs->GetYaxis()->SetTitleOffset(0.9);
     
     // Draw the histos
     hsigSubs->Draw("hist");
     hbkg->Draw("samehist");
+    textKin->Draw("same");
     c1->Update();
     
     TLegend *leg = new TLegend(0.454023,0.3002114,0.8721264,0.4904863);
@@ -707,6 +782,14 @@ void plotMinvForMuIDCuts(TFile* fsig, TFile* fbkg, const char* varname [ ])
     leg->SetLineWidth(1);
     leg->SetFillColor(0);
     leg->SetFillStyle(0);
+    
+    //=======
+    TLatex* textKin = new TLatex(0.1465517,0.653277,fKinRange.Data());
+    textKin->SetNDC();
+    textKin->SetTextFont(42);
+    textKin->SetTextSize(0.0422833);
+    textKin->SetLineWidth(2);
+    //=======
   
     
     TIter histos(varMinv);
@@ -723,11 +806,19 @@ void plotMinvForMuIDCuts(TFile* fsig, TFile* fbkg, const char* varname [ ])
       h->SetLineColor(color);
       h->SetMarkerColor(color++);
       
+      h->GetXaxis()->SetLabelSize(0.05);
+      h->GetXaxis()->SetTitleSize(0.05);
+      h->GetXaxis()->SetTitleOffset(0.93);
+      h->GetYaxis()->SetLabelSize(0.05);
+      h->GetYaxis()->SetTitleSize(0.05);
+      h->GetYaxis()->SetTitleOffset(0.9);
+      
       h->SetTitle(Form("%s dimuon m_{inv} %s cuts comparison",stype.Data(),varname[i]));
       
       leg->AddEntry(h,Form("%s cut %2.4f",varname[i],cutVal),"pl");
       
       h->Draw("same");
+      textKin->Draw("same");
       c1->Update();
     }
     
@@ -740,20 +831,68 @@ void plotMinvForMuIDCuts(TFile* fsig, TFile* fbkg, const char* varname [ ])
 
 
 //___________________________________________________________
+Bool_t getKinRange(TString sSig, TString sBkg)
+{
+  // Extract pt and y ranges from file names
+  
+  sSig.Remove(0,sSig.First('_')+1);
+  sSig.Remove(0,sSig.First('_')+1);
+  sSig.Remove(0,sSig.First('_')+1);
+  
+  sBkg.Remove(0,sBkg.First('_')+1);
+  sBkg.Remove(0,sBkg.First('_')+1);
+  sBkg.Remove(0,sBkg.First('_')+1);
+  
+  if ( sSig.CompareTo(sBkg.Data()) )
+  {
+    std::cout << "Signal and background are not computed in the same kinematical range or the soft muon cuts are different" << std::endl;
+    return kFALSE;
+  }
+  
+  sSig.Remove(0,sSig.First('_')+1);
+  
+  TString sSigY(sSig.Data());
+  sSig.Remove(sSig.First('Y')-1,sSig.Sizeof());
+  sSig.Remove(0,2); // Contains only the pt range
+  TObjArray* aPt = static_cast<TObjArray*>(sSig.Tokenize("_"));
+  
+  TString sptMin = static_cast<TObjString*>(aPt->At(0))->GetString();
+  Double_t ptMin = sptMin.Atof();
+  
+  TString sptMax = static_cast<TObjString*>(aPt->At(1))->GetString();
+  Double_t ptMax = sptMax.Atof();
+  
+  sSigY.Remove(0,sSigY.First('Y'));
+  sSigY.Remove(0,1); // Contains only the y range
+  TObjArray* aY = static_cast<TObjArray*>(sSigY.Tokenize("_"));
+  
+  TString sYMin = static_cast<TObjString*>(aY->At(0))->GetString();
+  Double_t YMin = sYMin.Atof();
+  
+  TString sYMax = static_cast<TObjString*>(aY->At(1))->GetString();
+  Double_t YMax = sYMax.Atof();
+  
+  fKinRange += Form("%1.1f < p_{T} < %1.1f ; %1.1f < |y| < %1.1f",ptMin,ptMax,YMin,YMax);
+  return kTRUE;
+}
+
+
+//___________________________________________________________
 void muIDplots(const char* filename_sig, const char* filename_bkg)
 {
   gStyle->SetOptStat(0);
   
-  TString sSig(filename_sig);
-  TString sBkg(filename_bkg);
-  
-  
-  if ( sSig.Contains("NoHPincl") && sSig.Contains("NoHPincl") ) isHPincluded = kFALSE;
-  
-  
   TFile *fsig = new TFile(filename_sig,"READ");
   TFile *fbkg = new TFile(filename_bkg,"READ");
   
+  TString sSig(filename_sig);
+  TString sBkg(filename_bkg);
+  
+  if ( sSig.Contains("NoHPincl") && sSig.Contains("NoHPincl") ) isHPincluded = kFALSE;
+
+  if ( !getKinRange(sSig,sBkg) ) return;
+  
+  //============= Performing plots
   const char* varname[19] = {"isGoodMuon", "highPurity", "TrkMuArb", "TMOneStaTight", "nPixValHits",
     "nMuValHits", "nTrkHits", "normChi2_inner", "normChi2_global", "nPixWMea",
     "nTrkWMea", "StationsMatched", "dxy", "dxyErr", "dz",
