@@ -50,10 +50,10 @@ void plotSingleCutEfficiency(TFile* fsig, TFile* fbkg, const char* varname [ ])
   TString sign("");
   for (int i=0; i<19; i++) {
     TCanvas *c1 = new TCanvas();
-    TH1F *hsig = (TH1F*) aSig->FindObject(Form("h%s_sig",varname[i]));
-    TH1F *hSbkg = (TH1F*) aSBkg->FindObject(Form("h%s_sig",varname[i]));
-    TH1F *hbkg = (TH1F*) aBkg->FindObject(Form("h%s_bkg",varname[i]));
-    TH1F *hbkg2 = (TH1F*) aBSig->FindObject(Form("h%s_bkg",varname[i]));
+    TH1F *hsig = (TH1F*) aSig->FindObject(Form("h%s_sig",varname[i])); // Signal from MC
+    TH1F *hSbkg = (TH1F*) aSBkg->FindObject(Form("h%s_sig",varname[i])); // Signal from Data
+    TH1F *hbkg = (TH1F*) aBkg->FindObject(Form("h%s_bkg",varname[i])); // Background from Data
+    TH1F *hbkg2 = (TH1F*) aBSig->FindObject(Form("h%s_bkg",varname[i]));  // Background from MC
     
     
     if (!hsig || !hSbkg || !hbkg || !hbkg2 )
@@ -62,13 +62,12 @@ void plotSingleCutEfficiency(TFile* fsig, TFile* fbkg, const char* varname [ ])
       return;
     }
     
-    double nbkg = hbkg->GetMaximum();
-    double nbkg2 = hbkg2->GetMaximum();
-    double nsig = hsig->GetMaximum()- bkgNorm*nbkg2;
-    double nSbkg = hSbkg->GetMaximum()- bkgNorm*nbkg2;
-    
+    double nbkg = hbkg->GetMaximum(); // Maximum data bkg (total)
+    double nbkg2 = hbkg2->GetMaximum(); // Maximum MC bkg (total)
+    double nsig = hsig->GetMaximum()- bkgNorm*nbkg2; // MC signal (total) substracted from MC bkg
+    double nSbkg = hSbkg->GetMaximum()- bkgNorm*nbkg; // Data signal (total) substracted from MC bkg
+
     Double_t scale_sig = nSbkg/nsig;
-    
     nsig *= scale_sig;
     
     int nbins = hsig->GetNbinsX();
@@ -202,10 +201,9 @@ void plotSingleCutEfficiencyWSoftMuCut(TFile* fsig, TFile* fbkg, const char* var
     double nbkg = hbkg->GetMaximum();
     double nbkg2 = hbkg2->GetMaximum();
     double nsig = hsig->GetMaximum()- bkgNorm*nbkg2;
-    double nSbkg = hSbkg->GetMaximum()- bkgNorm*nbkg2;
+    double nSbkg = hSbkg->GetMaximum()- bkgNorm*nbkg;
     
     Double_t scale_sig = nSbkg/nsig;
-    
     nsig *= scale_sig;
     
     int nbins = hsig->GetNbinsX();
