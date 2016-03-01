@@ -42,13 +42,14 @@ void muIDCutsOptim::Loop()
   //===== Definition of file type, particle and if we want the high purity cut included in the soft muon ID cuts
   const char* fileType = "MC";
   const char* particle = "JPsi";
+  fIspp = kFALSE;
   fIncludeHighPurity = kFALSE;
   //=====
   
   
   Long64_t nentries(0);
   if ( !strcmp(fileType,"MC") ) nentries = fChain->GetEntries();
-  else nentries = 600000;
+  else nentries = 1500000;
   
   std::cout << "# Events = " << nentries << std::endl;
   
@@ -63,11 +64,11 @@ void muIDCutsOptim::Loop()
   Double_t leMinvBkg2 = 3.3; // Bkg 1 range (sideband)
   Double_t ueMinvBkg2 = 3.5;
 
-  Double_t Ptmin = 3.0; // Pt cut (6.5)
-  Double_t Ptmax = 6.5; // (12.0)
+  Double_t Ptmin = 3.0; // Pt cut (6.5) (3.0)
+  Double_t Ptmax = 6.5; // (12.0) (6.5)
   
-  Double_t Ymin = 2.0; // Y cut (0.0)
-  Double_t Ymax = 2.4; // (2.4)
+  Double_t Ymin = 2.0; // Y cut (0.0) (2.0)
+  Double_t Ymax = 2.4; // (2.4) (2.4)
   //=====
   
   
@@ -179,7 +180,7 @@ void muIDCutsOptim::Loop()
     if (ientry < 0) break;
     nb = fChain->GetEntry(jentry);   nbytes += nb;
     
-    if ( jentry % 1000 == 0 ) std::cout << jentry << std::endl;
+    if ( jentry % 1000 == 0 ) std::cout << jentry << "/" << nentries << std::endl;
     
     Double_t weight = fChain->GetWeight()*GetNColl(Centrality); // This is the weight for the Pt and centrality. The weight stored in the chain is filterEficiency/nentries
     
@@ -407,6 +408,8 @@ Double_t muIDCutsOptim::GetNColl(Int_t centr)
 {
   // Returns the corresponding Ncoll value to the "centr" centrality bin
   
+  if ( fIspp || !fCentMap ) return 1.;
+    
   Int_t normCent = TMath::Nint(centr/2.);
   
   Int_t lcent = 0;

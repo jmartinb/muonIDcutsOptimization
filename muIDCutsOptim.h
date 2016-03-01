@@ -52,10 +52,10 @@ class muIDCutsOptim {
   Float_t         SumET_ZDC;
   Float_t         SumET_ZDCplus;
   Float_t         SumET_ZDCminus;
-  Int_t           nEP;
-  Float_t         rpAng[29];   //[nEP]
-  Float_t         rpSin[29];   //[nEP]
-  Float_t         rpCos[29];   //[nEP]
+//  Int_t           nEP;
+//  Float_t         rpAng[29];   //[nEP]
+//  Float_t         rpSin[29];   //[nEP]
+//  Float_t         rpCos[29];   //[nEP]
   Int_t           Reco_QQ_size;
   Int_t           Reco_QQ_type[36];   //[Reco_QQ_size]
   Int_t           Reco_QQ_sign[36];   //[Reco_QQ_size]
@@ -157,6 +157,7 @@ class muIDCutsOptim {
   map<Int_t, Double_t>   fCentMap; // TMap for centrality-Ncoll mapping
   Double_t        fCentBinning[200];
   Int_t           fCentBins;
+  Bool_t          fIspp;
   Bool_t          fIncludeHighPurity;
   
   // List of branches
@@ -184,10 +185,10 @@ class muIDCutsOptim {
   TBranch        *b_SumET_ZDC;   //!
   TBranch        *b_SumET_ZDCplus;   //!
   TBranch        *b_SumET_ZDCminus;   //!
-  TBranch        *b_nEP;   //!
-  TBranch        *b_rpAng;   //!
-  TBranch        *b_rpSin;   //!
-  TBranch        *b_rpCos;   //!
+//  TBranch        *b_nEP;   //!
+//  TBranch        *b_rpAng;   //!
+//  TBranch        *b_rpSin;   //!
+//  TBranch        *b_rpCos;   //!
   TBranch        *b_Reco_QQ_size;   //!
   TBranch        *b_Reco_QQ_type;   //!
   TBranch        *b_Reco_QQ_sign;   //!
@@ -396,10 +397,10 @@ void muIDCutsOptim::Init(TTree *tree)
   fChain->SetBranchAddress("SumET_ZDC", &SumET_ZDC, &b_SumET_ZDC);
   fChain->SetBranchAddress("SumET_ZDCplus", &SumET_ZDCplus, &b_SumET_ZDCplus);
   fChain->SetBranchAddress("SumET_ZDCminus", &SumET_ZDCminus, &b_SumET_ZDCminus);
-  fChain->SetBranchAddress("nEP", &nEP, &b_nEP);
-  fChain->SetBranchAddress("rpAng", rpAng, &b_rpAng);
-  fChain->SetBranchAddress("rpSin", rpSin, &b_rpSin);
-  fChain->SetBranchAddress("rpCos", rpCos, &b_rpCos);
+//  fChain->SetBranchAddress("nEP", &nEP, &b_nEP);
+//  fChain->SetBranchAddress("rpAng", rpAng, &b_rpAng);
+//  fChain->SetBranchAddress("rpSin", rpSin, &b_rpSin);
+//  fChain->SetBranchAddress("rpCos", rpCos, &b_rpCos);
   fChain->SetBranchAddress("Reco_QQ_size", &Reco_QQ_size, &b_Reco_QQ_size);
   fChain->SetBranchAddress("Reco_QQ_type", Reco_QQ_type, &b_Reco_QQ_type);
   fChain->SetBranchAddress("Reco_QQ_sign", Reco_QQ_sign, &b_Reco_QQ_sign);
