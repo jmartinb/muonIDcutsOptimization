@@ -273,7 +273,7 @@ class muIDCutsOptim {
   TBranch        *b_Reco_mu_ptErr_inner;   //!
   TBranch        *b_Reco_mu_ptErr_global;   //!
   
-  muIDCutsOptim(TTree *tree=0, const char* centMapFile="CentralityMap_PbPb2015.txt");
+  muIDCutsOptim(TTree *tree=0, const char* centMapFile="");
   virtual ~muIDCutsOptim();
   virtual Int_t    Cut(TString var, int iqq, float cutval);
   virtual Int_t    GetEntry(Long64_t entry);

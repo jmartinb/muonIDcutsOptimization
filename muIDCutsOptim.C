@@ -183,33 +183,56 @@ void muIDCutsOptim::Loop()
     if ( jentry % 1000 == 0 ) std::cout << jentry << "/" << nentries << std::endl;
     
     Double_t weight = fChain->GetWeight()*GetNColl(Centrality); // This is the weight for the Pt and centrality. The weight stored in the chain is filterEficiency/nentries
-    
+
     //Fill centrality histo
     hCentw->Fill(Centrality/2.,weight);
     hCent->Fill(Centrality/2.);
     
     
     //*************** Loop on reco dimuons
-    for (int i=0; i<Reco_QQ_size; i++)
+//    for (int i=0; i<Reco_QQ_size; i++)
+//    {
+    Int_t i(0);
+    Bool_t kQQfound(kFALSE);
+    while ( i < Reco_QQ_size && !kQQfound ) // This is just to take only the first dimuon passing the basic conditions, to not double count single muons
     {
-      if ( !isTriggerSelected(i) ) continue; // Checks if the event is selected by the trigger
+      if ( !isTriggerSelected(i) || Reco_QQ_sign[i]!=0 )
+      {
+        i++;
+        continue; // Checks if the event is selected by the trigger
+      }
       
-      if (Reco_QQ_sign[i]!=0) continue;
+//      if (Reco_QQ_sign[i]!=0) continue;
       tlvmupl = (TLorentzVector*) Reco_QQ_mupl_4mom->At(i);
       tlvmumi = (TLorentzVector*) Reco_QQ_mumi_4mom->At(i);
       
-      if (!IsAccept(tlvmupl->Pt(), tlvmupl->Eta()) || !IsAccept(tlvmumi->Pt(), tlvmumi->Eta())) continue; // Basic single muon kinematic cuts
+      if (!IsAccept(tlvmupl->Pt(), tlvmupl->Eta()) || !IsAccept(tlvmumi->Pt(), tlvmumi->Eta()))
+      {
+        i++;
+        continue; // Basic single muon kinematic cuts
+      }
       
       tlvqq = (TLorentzVector*) Reco_QQ_4mom->At(i);
       Double_t mass = tlvqq->M();
       Double_t QQPt = tlvqq->Pt();
       Double_t QQY = TMath::Abs(tlvqq->Rapidity());
       
-      if ( QQPt < Ptmin || QQPt > Ptmax || QQY < Ymin || QQY > Ymax ) continue; // The simulation is restricted to pt in [Ptmin,Ptmax], so this rejects background dmuons outside the range
+      if ( QQPt < Ptmin || QQPt > Ptmax || QQY < Ymin || QQY > Ymax )
+      {
+        i++;
+        continue; // The simulation is restricted to pt in [Ptmin,Ptmax], so this rejects background dmuons outside the range
+      }
       
       bool issig = (mass>leMinvSig && mass<ueMinvSig);
       bool isbkg = ((mass>leMinvBkg1 && mass<ueMinvBkg1) || (mass>leMinvBkg2 && mass<ueMinvBkg2));
       
+      if ( !issig && ! isbkg )
+      {
+        i++;
+        continue; // We keep only dimuons in the sidebands and signal ranges
+      }
+      
+      kQQfound = kTRUE; // If at this point the dimuon has passed the basic conditions we keep only this dimuon from the event
       
       const double varValP[19] = {Reco_QQ_mupl_isGoodMuon[i],Reco_QQ_mupl_highPurity[i],Reco_QQ_mupl_TrkMuArb[i],Reco_QQ_mupl_TMOneStaTight[i],Reco_QQ_mupl_nPixValHits[i],Reco_QQ_mupl_nMuValHits[i],Reco_QQ_mupl_nTrkHits[i],Reco_QQ_mupl_normChi2_inner[i],Reco_QQ_mupl_normChi2_global[i],Reco_QQ_mupl_nPixWMea[i],Reco_QQ_mupl_nTrkWMea[i],Reco_QQ_mupl_StationsMatched[i],Reco_QQ_mupl_dxy[i],Reco_QQ_mupl_dxyErr[i],Reco_QQ_mupl_dz[i],Reco_QQ_mupl_dzErr[i],Reco_QQ_mupl_ptErr_inner[i],Reco_QQ_mupl_ptErr_global[i],Reco_QQ_VtxProb[i]};
       const double varValM[19] = {Reco_QQ_mumi_isGoodMuon[i],Reco_QQ_mumi_highPurity[i],Reco_QQ_mumi_TrkMuArb[i],Reco_QQ_mumi_TMOneStaTight[i],Reco_QQ_mumi_nPixValHits[i],Reco_QQ_mumi_nMuValHits[i],Reco_QQ_mumi_nTrkHits[i],Reco_QQ_mumi_normChi2_inner[i],Reco_QQ_mumi_normChi2_global[i],Reco_QQ_mumi_nPixWMea[i],Reco_QQ_mumi_nTrkWMea[i],Reco_QQ_mumi_StationsMatched[i],Reco_QQ_mumi_dxy[i],Reco_QQ_mumi_dxyErr[i],Reco_QQ_mumi_dz[i],Reco_QQ_mumi_dzErr[i],Reco_QQ_mumi_ptErr_inner[i],Reco_QQ_mumi_ptErr_global[i],0.}; //Reco_QQ_VtxProb set to 0. since it is a dimuon variable
@@ -299,7 +322,7 @@ void muIDCutsOptim::Loop()
         }
       }
       //=======
-
+      i++;
     }
   }
   
@@ -408,7 +431,7 @@ Double_t muIDCutsOptim::GetNColl(Int_t centr)
 {
   // Returns the corresponding Ncoll value to the "centr" centrality bin
   
-  if ( fIspp || !fCentMap ) return 1.;
+  if ( fIspp ) return 1.;
     
   Int_t normCent = TMath::Nint(centr/2.);
   
@@ -445,10 +468,13 @@ void muIDCutsOptim::SetCentralityMap(const char* file)
       fCentMap[ucent] = Ncoll;
       fCentBinning[fCentBins++] = ucent;
     }
+    if ( fCentBins == 0 ) std::cout << "No centrality map could be defined: The file provided is empty" << std::endl;
   }
-  else std::cout << "No centrality map could be defined: No file provided" << std::endl;
-  
-  if ( fCentBins == 0 ) std::cout << "No centrality map could be defined: The file provided is empty" << std::endl;
+  else
+  {
+    fCentBins = 0;
+    std::cout << "No centrality map could be defined: No file provided" << std::endl;
+  }
 }
 
 
