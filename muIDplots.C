@@ -80,13 +80,19 @@ void plotSingleCutEfficiency(TFile* fsig, TFile* fbkg, const char* varname [ ])
     hbkgeff->SetLineColor(kBlue);
     TH1F *hsignif = new TH1F(Form("hsignif_%s",varname[i]),Form("hsignif;%s;S / #sqrt{S+B}",varname[i]),nbins,binmin,binmax);
     hsignif->SetLineColor(kGreen);
-    
+
     for (int j=1; j<nbins+1; j++) {
       double nbkgj = hbkg->GetBinContent(j);
       double nbkgj2 = hbkg2->GetBinContent(j);
       double nsigj = scale_sig*(hsig->GetBinContent(j) - bkgNorm*nbkgj2);
 
-      hsigeff->SetBinContent(j,nsigj/nsig);;
+      double effSig = nsigj/nsig;
+      if ( effSig > 1.0 ) // In pp MC, since there is no injected bkg, the bkg substraction can lead to eff slightly bigger than 1
+      {
+        if ( effSig < 1.01 ) effSig = 1.0;
+        else cout << "Error: the efficiency is bigger than 100%" << endl;
+      }
+      hsigeff->SetBinContent(j,effSig);;
       hbkgeff->SetBinContent(j,1.-nbkgj/nbkg);
       hsignif->SetBinContent(j,nsigj+nbkgj>0 ? nsigj/sqrt(nsigj+nbkgj) : 0);
     }
@@ -222,7 +228,13 @@ void plotSingleCutEfficiencyWSoftMuCut(TFile* fsig, TFile* fbkg, const char* var
       double nbkgj2 = hbkg2->GetBinContent(j);
       double nsigj = scale_sig*(hsig->GetBinContent(j) - bkgNorm*nbkgj2);
       
-      hsigeff->SetBinContent(j,nsigj/nsig);;
+      double effSig = nsigj/nsig;
+      if ( effSig > 1.0 ) // In pp MC, since there is no injected bkg, the bkg substraction can lead to eff slightly bigger than 1
+      {
+        if ( effSig < 1.01 ) effSig = 1.0;
+        else cout << "Error: the efficiency is bigger than 100%" << endl;
+      }
+      hsigeff->SetBinContent(j,effSig);;
       hbkgeff->SetBinContent(j,1.-nbkgj/nbkg);
       hsignif->SetBinContent(j,nsigj+nbkgj>0 ? nsigj/sqrt(nsigj+nbkgj) : 0);
     }
